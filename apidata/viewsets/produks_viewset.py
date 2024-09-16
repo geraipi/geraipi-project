@@ -41,7 +41,7 @@ class ProdukViewSet(viewsets.ModelViewSet):
     """
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["kategori", "negara"]
+    filterset_fields = ["kategori", "negara", "slug"]
     queryset = Produk.objects.all()
     serializer_class = ProdukSerializer
     http_method_names = ["get", "head", "option"]

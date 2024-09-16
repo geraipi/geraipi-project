@@ -20,7 +20,6 @@ class TransaksiToko(FrontPage):
         status = request.GET.get("status", 1)
         if status:
             cart = Cart.objects.get(pk=request.POST.get("cart_id"))
-            # for c in cart:
             if cart.status_toko == 1:
                 cart.status_toko = 2
                 cart.status = 2
@@ -36,12 +35,11 @@ class TransaksiToko(FrontPage):
                     cek = Cart.objects.filter(nomor_resi=resi)
                     if cek.exists():
                         messages.error(request, "Sorry, Nomor resi sudah digunakan")
-                        return redirect(
-                            reverse(
-                                "transaksi_toko",
-                                kwargs={"id": str(request.user.id)},
-                            ) + "?status=" + str(status)
+                        urls_redirect = reverse(
+                            "transaksi_toko",
+                            kwargs={"id": str(request.user.id)},
                         )
+                        return redirect(f"{urls_redirect}?status={str(status)}")
                     from apidata.resi_check import ResiCheck
                     from master.models import ConfigurationWebsite
 
@@ -58,21 +56,19 @@ class TransaksiToko(FrontPage):
                                 resi=resi, courier=code_expedisi.code
                             )
                             if cekresi.status_code != 200:
-                                return redirect(
-                                    reverse(
-                                        "transaksi_toko",
-                                        kwargs={"id": str(request.user.id)},
-                                    ) + "?status=" + str(status)
+                                url_redirect = reverse(
+                                    "transaksi_toko",
+                                    kwargs={"id": str(request.user.id)},
                                 )
+                                return redirect(f"{url_redirect}?status={str(status)}")
                             else:
                                 messages.success(request, "Nomor resi valid")
                                 cart.save()
-                                return redirect(
-                                    reverse(
-                                        "transaksi_toko",
-                                        kwargs={"id": str(request.user.id)},
-                                    ) + "?status=" + str(status)
+                                url_redirect = reverse(
+                                    "transaksi_toko",
+                                    kwargs={"id": str(request.user.id)},
                                 )
+                                return redirect(f"{url_redirect}?status={str(status)}")
                         elif code_expedisi.source_request == 2:
                             cekinit.api = konfigurasi.api_biteship
                             cekresi = cekinit.check_resi_bitesip(
@@ -81,37 +77,34 @@ class TransaksiToko(FrontPage):
                             if cekresi.status_code != 200:
                                 cart.save()
                                 messages.success(request, "Nomor resi valid")
-                                return redirect(
-                                    reverse(
-                                        "transaksi_toko",
-                                        kwargs={"id": str(request.user.id)},
-                                    ) + "?status=" + str(status)
+                                url_redirect = reverse(
+                                    "transaksi_toko",
+                                    kwargs={"id": str(request.user.id)},
                                 )
+                                return redirect(f"{url_redirect}?status={str(status)}")
                             else:
                                 messages.error(request, "Sorry, Nomor resi tidak valid")
-                                return redirect(
-                                    reverse(
-                                        "transaksi_toko",
-                                        kwargs={"id": str(request.user.id)},
-                                    ) + "?status=" + str(status)
+                                url_redirect = reverse(
+                                    "transaksi_toko",
+                                    kwargs={"id": str(request.user.id)},
                                 )
+                                return redirect(f"{url_redirect}?status={str(status)}")
                     else:
                         cart.save()
                         messages.success(request, "Nomor resi valid")
-                        return redirect(
-                            reverse(
-                                "transaksi_toko",
-                                kwargs={"id": str(request.user.id)},
-                            ) + "?status=" + str(status)
-                        )
-                else:
-                    messages.error(request, "Sorry, please input your number")
-                    return redirect(
-                        reverse(
+                        url_redirect = reverse(
                             "transaksi_toko",
                             kwargs={"id": str(request.user.id)},
-                        ) + "?status=" + str(status)
+                        )
+                        return redirect(f"{url_redirect}?status={str(status)}")
+                else:
+                    messages.error(request, "Sorry, please input your number")
+
+                    url_redirect = reverse(
+                        "transaksi_toko",
+                        kwargs={"id": str(request.user.id)},
                     )
+                    return redirect(f"{url_redirect}?status={str(status)}")
             elif cart.status_toko == 3:
                 cart.status = 3
                 cart.tanggal_selesai = datetime.datetime.now()

@@ -1,0 +1,202 @@
+{% extends 'layout.html' %} 
+{% load static translater %} 
+{% block header %}
+<nav class="sticky top-0 flex bg-white px-2 py-2 z-50">
+    <a href="/home" class="flex gap-2 items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m7.825 13l4.9 4.9q.3.3.288.7t-.313.7q-.3.275-.7.288t-.7-.288l-6.6-6.6q-.15-.15-.213-.325T4.425 12q0-.2.063-.375T4.7 11.3l6.6-6.6q.275-.275.688-.275t.712.275q.3.3.3.713t-.3.712L7.825 11H19q.425 0 .713.288T20 12q0 .425-.288.713T19 13H7.825Z" /></svg>
+        <h2 class="text-xl font-bold">Back</h2>
+    </a>
+</nav>
+{% endblock %} 
+{% block content %}
+<div class="px-3 mt-3 mb-4">
+    <div>
+        <section class="splide" aria-label="Splide Basic HTML Example">
+            <div class="splide__track">
+                <ul class="splide__list">
+                    {% if gambar %}
+                        {% for g in gambar %}
+                        <li class="splide__slide">
+                            <img src="{% get_media_prefix %}{{ g.gambar }}" alt="" class="image-fluid w-100" />
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="splide__slide">
+                            <img src="{% static 'sample.png' %}" alt="" class="image-fluid w-100" />
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </section>
+    </div>
+    <div class="flex flex-col gap-3">
+        <div class="shadow-lg rounded-lg border">
+            <div class="flex flex-col items-center my-5">
+                <strong class="">
+                    <h4 class="text-sm text-center">{% translater user.languages.code produk.nama produk.nama %}</h4>
+                    <h4 class="text-lg text-center">{{ produk.harga }} 𝛑</h4>
+                </strong>
+            </div>
+        </div>
+        <div class="shadow-lg rounded-lg p-2 border">
+            <div class="flex items-center gap-2">
+                <span class="w-10 h-10 rounded-full bg-slate-500"></span>
+                <div class="flex justify-between grow">
+                    <p class="text-slate-600 flex flex-col justify-center">{{ produk.store.nama }}</p>
+                    <a class="text-slate-600 bg-orange-400 rounded-full px-4 py-1" href="/koleksi/{{produk.store.pk}}">{% translater user.languanges.code "Lihat Koleksi" "Lihat Koleksi" %}</a>
+                </div>
+            </div>
+        </div>
+        <div class="shadow-lg rounded-lg p-2 border">
+            <div class="py-4">
+                <h3 class="text-xl my-2 font-bold">{% translater user.languages.code "Deskripsi Detail" "Deskripsi Detail" %}</h3>
+                <div class="my-3">
+                    <table class="table-auto w-full">
+                        <tbody>
+                            <tr>
+                                <td>{% translater user.languages.code "Type" "Type"%}</td>
+                                <td>:</td>
+                                <td class="flex flex-wrap gap-2 flex-row">
+                                    <span class=" py-[2px] px-2 w-full">
+                                        {% if produk.tipe %}
+                                            {{ produk.tipe.nama }}
+                                        {% else %}
+                                            {% translater user.languages.code "Tanpa Tipe" "Tanpa Tipe"%}
+                                        {% endif %}
+                                        {% for a in produk.tipe.all %}
+                                            {% translater user.languages.code a.nama a.nama %}
+                                        {% endfor %}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{%translater user.languages.code "Warna" "Warna"%}</td>
+                                <td>:</td>
+                                <td class="flex flex-wrap gap-2 flex-row">
+                                    <span class=" py-[2px] px-2 w-full">
+                                        {% for a in produk.warna.all %}
+                                            {% translater user.languages.code a.nama a.nama %}, 
+                                        {% endfor %}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{%translater user.languages.code "Stok" "Stok"%}</td>
+                                <td>:</td>
+                                <td class="flex flex-wrap gap-2 flex-row">
+                                    <span class=" py-[2px] px-2 w-full">{{ produk.stok_produk }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{% translater user.languages.code "Lintas Negara ?" "Lintas Negara ?" %}</td>
+                                <td>:</td>
+                                <td class="flex flex-wrap gap-2 flex-row">
+                                    <span class=" py-[2px] px-2 w-full">
+                                        {% if produk.cross_boarder %}
+                                            {%translater user.languages.code "YA" "YA"%}
+                                        {% else %}
+                                            {%translater user.languages.code "TIDAK" "TIDAK"%}
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{%translater user.languages.code "Keterangan" "Keterangan"%}</td>
+                                <td>:</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="border rounded-lg mb-2 p-2">
+                    <label for="">{%translater user.languages.code "Pilih Bahasa Deskripsi" "Pilih Bahasa Deskripsi"%}</label>
+                    <form action="" method="get" id="formsubmitlang">
+                        <select name="language" id="" class="w-full" onchange="">
+                            {% for language in languages %}
+                            <option value="{{ language.code }}" 
+                                {% if deflang == language.code %}
+                                selected
+                                {% elif request.GET.language == language.code %}
+                                selected
+                                {% endif %}
+                            >{{ language.alias }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+                <div class="text-justify p-4 border rounded-lg data-deskripsi">
+                    {{ deskripsi.deskripsi|safe }}
+                </div>
+            </div>
+        </div>
+        <div class="shadow-lg w-full rounded-lg p-2 border">
+            <h2 class="font-bold">Review</h2>
+            <div class="p-0 flex flex-col">
+            {% if ulasan.object_list %}
+                {% for a in ulasan.object_list %}
+                <div class="p-2 border rounded-lg my-2 flex flex-col gap-2">
+                    <p class="font-bold">{{ a.cart.user }}</p>
+                    <p style="font-size:10px;">{{ a.created_at|date:"M d, Y" }}</p>
+                    <p>{{ a.catatan }}</p>
+                    <div>
+                        <div class="rating">
+                            <input type="radio" value="0" name="rating-{{ forloop.counter }}" style="display: none;" class="mask mask-star-2 bg-orange-400" disabled {% if a.produk is None %} checked {% endif %}/>
+                            <input type="radio" value="1" name="rating-{{ forloop.counter }}" class="mask mask-star-2 bg-orange-400" disabled {% if a.produk == 1 %} checked {% endif %} />
+                            <input type="radio" value="2" name="rating-{{ forloop.counter }}" class="mask mask-star-2 bg-orange-400" disabled {% if a.produk == 2 %} checked {% endif %} />
+                            <input type="radio" value="3" name="rating-{{ forloop.counter }}" class="mask mask-star-2 bg-orange-400" disabled {% if a.produk == 3 %} checked {% endif %} />
+                            <input type="radio" value="4" name="rating-{{ forloop.counter }}" class="mask mask-star-2 bg-orange-400" disabled {% if a.produk == 4 %} checked {% endif %} />
+                            <input type="radio" value="5" name="rating-{{ forloop.counter }}" class="mask mask-star-2 bg-orange-400" disabled {% if a.produk == 5 %} checked {% endif %} />
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="p-2 border rounded-lg my-2 flex flex-col gap-2">
+                    <p class="font-bold">Not found</p>
+                </div>
+            {% endif %}
+            </div>
+            <div class="flex flex-row justify-between">
+                {% if ulasan.has_previous %}
+                <a href="{% url 'produk_detail' slug=produk.slug %}?page={{ ulasan.previous_page_number }}" class="btn btn-neutral  btn-sm" id="prev-button">{%translater user.languages.code "Sebelumnya" "Sebelumnya"%}</a>
+                {% else %}
+                <a href="#" class="btn btn-neutral btn-disabled btn-sm" id="prev-button">{%translater user.languages.code "Sebelumnya" "Sebelumnya"%}</a>
+                {% endif %}
+                {% if ulasan.has_next %}
+                <a href="{% url 'produk_detail' slug=produk.slug %}?page={{ ulasan.next_page_number }}" class="btn btn-neutral  btn-sm" id="prev-button">{%translater user.languages.code "Selanjutnya" "Selanjutnya"%}{{ request.GET.slug }}</a>
+                {% else %}
+                <a href="#" class="btn btn-neutral btn-disabled btn-sm" id="prev-button">{%translater user.languages.code "Selanjutnya" "Selanjutnya"%}{{ request.GET.slug }}</a>
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
+{% block bottom_nav %}
+<div class="flex flex-row justify-evenly sticky bottom-0 bg-white opacity-95">
+    <div class="w-1/2 flex justify-center">
+        <button type="button" class="bg-green-500 px-8 py-1 my-2 rounded-full h-8 text-white" data-id="{{ produk.pk }}">{% translater user.languages.code "Coming Soon" "Coming Soon" %}</button>
+    </div>
+    {% if produk.stok_produk > 0 %}
+    <div class="w-1/2 flex justify-center">
+        <a class="bg-red-600 px-8 py-1 my-2 rounded-full h-8 text-white" href="/keranjang/{{ produk.id }}">{% translater user.languages.code "Beli Langsung" "Beli Langsung" %}</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
+{% block script %}
+<script src="{% static 'moment.min.js' %}"></script>
+<script>
+    $(function () {
+        var splide = new Splide(".splide");
+        splide.mount();
+        $("#back-navigation").on("click", function () {
+            window.history.back();
+        });
+        $('select[name="language"]').on("change", function(){
+            $('#formsubmitlang').submit()
+        })
+    });
+</script>
+{% endblock %}
