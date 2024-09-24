@@ -1,5 +1,9 @@
 name: Deploy to server production
-on: [workflow_dispatch]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 jobs:
   build:
     name: build-apps
@@ -13,11 +17,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: | 
-          cd /opt/GPMain
+          cd $HOME/Projek/geraipi_main
+          source $HOME/virtualenv/Projek/geraipi_main/3.10/bin/activate
           git pull origin main
-          export $(grep -v '^#' .env | xargs)
-          /opt/geraienv/bin/python /opt/GPMain/manage.py makemigrations
-          /opt/geraienv/bin/python /opt/GPMain/manage.py migrate
-          echo yes | /opt/geraienv/bin/python /opt/GPMain/manage.py collectstatic
-          service uwsgi restart
-          service nginx restart
+          touch tmp/restart.txt
